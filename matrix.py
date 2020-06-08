@@ -39,7 +39,6 @@ class Matrix():
 		else:
 			print("Columns of m1 must be equal to the rows of m2.")
 
-	# @classmethod
 	def multiply(self, n):
 		if isinstance(n, Matrix):
 			for i in range(n.rows):
