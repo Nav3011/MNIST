@@ -3,71 +3,50 @@ import math
 
 def sigmoid(x):
 	return 1 / (1 + math.exp(-x))
-
-def sigmoidD(x):
-	return x * (1 - x)
-
 class NeuralNetwork:
-	def __init__(self, Input, Hidden, Output):
-		self.input_nodes = Input
-		self.hidden_nodes = Hidden
-		self.output_nodes = Output
 
-		self.weights_IH = Matrix(self.hidden_nodes, self.input_nodes)
-		self.weights_HO = Matrix(self.output_nodes, self.hidden_nodes)
-		self.weights_IH.randomize()
-		self.weights_HO.randomize()
-
-		self.biases_H = Matrix(self.hidden_nodes, 1)
-		self.biases_O = Matrix(self.output_nodes, 1)
-		self.biases_H.randomize()
-		self.biases_O.randomize()
-		self.learning_rate = 0.1
-
-	def feedforward(self, inputs):
-		input_data = Matrix.fromArray(inputs)
-
-		hidden = Matrix.dot(self.weights_IH, input_data)
-		hidden.add(self.biases_H)
-		hidden = Matrix.map(hidden, sigmoid)
-
-		output = Matrix.dot(self.weights_HO, hidden)
-		output.add(self.biases_O)
-		output = Matrix.map(output, sigmoid)
-		return output
-	def train(self, inputs, targets):
-		self.inputs = Matrix.fromArray(inputs)
-
-		self.hidden = Matrix.dot(self.weights_IH, self.inputs)
-		self.hidden.add(self.biases_H)
-		self.hidden = Matrix.map(self.hidden, sigmoid)
-
-		self.output = Matrix.dot(self.weights_HO, self.hidden)
-		self.output.add(self.biases_O)
-		self.output = Matrix.map(self.output, sigmoid)
-		# self.inputs = Matrix.fromArray(inputs)
-		self.targets = Matrix.fromArray(targets)
-		# self.outputs = self.feedforward(self.inputs)
-
-		self.output_error = Matrix.subtract(self.targets, self.output)
-		# self.weights_HO_transpose = Matrix.transpose(self.weights_HO)
-		# self.hidden_errors = Matrix.dot(self.weights_HO_transpose, self.error)
-		self.output_gradient = Matrix.map(self.output, sigmoidD)
-		self.output_gradient.multiply(self.output_error)
-		self.output_gradient.multiply(self.learning_rate)
-		self.hidden_transpose = Matrix.transpose(self.hidden)
-		self.weights_HO_delta = Matrix.dot(self.output_gradient, self.hidden_transpose)
-		self.weights_HO.add(self.weights_HO_delta)
-		self.biases_O.add(self.output_gradient)
-		# print(self.inputs.data)
+	def __init__(self, inputLayer, hiddenLayer1, hiddenLayer2, outputLayer):
+		print("[INFO] Network with entered architecture created")
+		self.input_nodes = inputLayer
+		self.hidden1_nodes = hiddenLayer1
+		self.hidden2_nodes = hiddenLayer2
+		self.output_nodes = outputLayer
 		
-		self.weights_HO_transpose = Matrix.transpose(self.weights_HO)
-		self.hidden_error = Matrix.dot(self.weights_HO_transpose, self.output_error)
-		self.hidden_gradient = Matrix.map(self.hidden, sigmoidD)
-		self.hidden_gradient.multiply(self.hidden_error)
-		self.hidden_gradient.multiply(self.learning_rate)
-		self.input_transpose = Matrix.transpose(self.inputs)
-		self.weights_IH_transpose = Matrix.transpose(self.inputs)
-		self.weights_IH_deltas = Matrix.dot(self.hidden_gradient, self.input_transpose)
-		self.weights_IH.add(self.weights_IH_deltas)
-		self.biases_H.add(self.hidden_gradient)
+		# weight matrices have shape (nodes in layer L+1) * (nodes in layer L)
+		print("[INFO] Weight matrices created")
+		self.weights_1 = Matrix(self.hidden1_nodes, self.input_nodes)
+		self.weights_2 = Matrix(self.hidden2_nodes, self.hidden1_nodes)
+		self.weights_3 = Matrix(self.output_nodes, self.hidden2_nodes)
+
+		print("[INFO] Weight matrices initialised")
+		self.weights_1.randomize()
+		self.weights_2.randomize()
+		self.weights_3.randomize()
+
+		# bias matrices have shape (nodes in layer L) * 1 -> column matrices 
+		print("[INFO] Bias matrices created")
+		self.biases_1 = Matrix(self.hidden1_nodes, 1)
+		self.biases_2 = Matrix(self.hidden2_nodes, 1)
+		self.biases_3 = Matrix(self.output_nodes, 1)
+		
+		print("[INFO] Bias matrices initialised")
+		self.biases_1.randomize()
+		self.biases_2.randomize()
+		self.biases_3.randomize()
+
+	def train(self, inputs, outputs):
+		#inputs and outputs are list. Convert to Matrix object
+		self.Input = Matrix.fromArray(inputs)
+		self.Output = Matrix.fromArray(outputs)
+
+		self.z1 = Matrix.dot(self.weights_1, self.Input)
+		self.z1.add(self.biases_1)
+		self.a1 = Matrix.map(self.z1, sigmoid)
+
+		self.z2 = Matrix.dot(self.weights_2, self.a1)
+		self.z2.add(self.biases_2)
+		self.a2 = Matrix.map(self.z2, sigmoid)		
+
+		self.z3 = Matrix.dot(self.weights_3, self.a2)
+		self.z3.add(self.biases_3)
+		self.a3 = Matrix.map(self.z3, sigmoid)
