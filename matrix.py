@@ -39,15 +39,18 @@ class Matrix():
 		else:
 			print("Columns of m1 must be equal to the rows of m2.")
 
-	def multiply(self, n):
-		if isinstance(n, Matrix):
-			for i in range(n.rows):
-				for j in range(n.cols):
-					self.data[i][j] = self.data[i][j]*n.data[i][j]
+	@staticmethod
+	def multiply(matrix, val):
+		result = Matrix(matrix.rows, matrix.cols)
+		if isinstance(val, Matrix):
+			for i in range(matrix.rows):
+				for j in range(matrix.cols):
+					result.data[i][j] = matrix.data[i][j]*val.data[i][j]
 		else:
-			for i in range(self.rows):
-				for j in range(self.cols):
-					self.data[i][j] = self.data[i][j]*n
+			for i in range(matrix.rows):
+				for j in range(matrix.cols):
+					result.data[i][j] = matrix.data[i][j]*val
+		return result
 
 	def add(self, n):
 		if isinstance(n, Matrix):
