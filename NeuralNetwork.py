@@ -38,6 +38,8 @@ class NeuralNetwork:
 		self.biases_2.randomize()
 		self.biases_3.randomize()
 
+		self.learning_rate = 0.2
+
 	def train(self, inputs, outputs):
 		#inputs and outputs are list. Convert to Matrix object
 		#Feed forward
@@ -86,7 +88,28 @@ class NeuralNetwork:
 		self.weight1_gradient = Matrix.dot(self.delta1, self.input_transpose)
 		# print(self.weight1_gradient.data)		
 
+		# updating the weights
+		self.weights_3 = Matrix.subtract(self.weights_3, Matrix.multiply(self.weight3_gradient,self.learning_rate))
+		self.weights_2 = Matrix.subtract(self.weights_2, Matrix.multiply(self.weight2_gradient,self.learning_rate))
+		self.weights_1 = Matrix.subtract(self.weights_1, Matrix.multiply(self.weight1_gradient,self.learning_rate))
 
+		#updating the biases
+		self.biases_3 = Matrix.subtract(self.biases_3, Matrix.multiply(self.delta3, self.learning_rate))
+		self.biases_2 = Matrix.subtract(self.biases_2, Matrix.multiply(self.delta2, self.learning_rate))
+		self.biases_1 = Matrix.subtract(self.biases_1, Matrix.multiply(self.delta1, self.learning_rate))
 
+	def predict(self, inputs):
+		self.Input = Matrix.fromArray(inputs)
 
+		self.z1 = Matrix.dot(self.weights_1, self.Input)
+		self.z1.add(self.biases_1)
+		self.a1 = Matrix.map(self.z1, sigmoid)
 
+		self.z2 = Matrix.dot(self.weights_2, self.a1)
+		self.z2.add(self.biases_2)
+		self.a2 = Matrix.map(self.z2, sigmoid)		
+
+		self.z3 = Matrix.dot(self.weights_3, self.a2)
+		self.z3.add(self.biases_3)
+		self.a3 = Matrix.map(self.z3, sigmoid)
+		return self.a3
