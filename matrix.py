@@ -96,3 +96,12 @@ class Matrix():
 				val = m.data[i][j]
 				result.data[i][j] = func(val)
 		return result
+
+	# @staticmethod
+	# def reshape(m, size):
+	# 	if size[0]*size[1] == len(m):
+	# 		new = Matrix(size[0], size[1])
+	# 		for i in range(size[0]):
+	# 			for j in range(size[1]):
+	# 				new.data[i][j] = size[1]*i+j
+	# 	return new
